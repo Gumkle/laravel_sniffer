@@ -1,5 +1,5 @@
 {
-    "name": "gumkle/laravel_filter_sniffer",
+    "name": "gumkle/laravel_sniffer",
     "description": "Package for making filtering in Laravel easier",
     "type": "laravel-plugin",
     "authors": [
