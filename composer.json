@@ -1,0 +1,17 @@
+{
+    "name": "gumkle/laravel_filter_sniffer",
+    "description": "Package for making filtering in Laravel easier",
+    "type": "laravel-plugin",
+    "authors": [
+        {
+            "name": "Dawid Dziedzic",
+            "email": "dziedzicdev@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Sniffer\\": "src/"
+        }
+    }
+}
