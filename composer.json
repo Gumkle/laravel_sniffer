@@ -8,7 +8,9 @@
             "email": "dziedzicdev@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "laravel/laravel": "5.5"
+    },
     "autoload": {
         "psr-4": {
             "Sniffer\\": "src/"
