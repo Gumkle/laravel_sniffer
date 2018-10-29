@@ -36,10 +36,19 @@ class Sniffer
      */
     public static function applySearchFilter(Builder $query, String $keyword, Array $columns)
     {
-        // Define sample so we don't have to repeat it every time
-        $sample = '%'.$keyword.'%';
+        // Convert string into array of single chars and stick them together to make sample
+        $keyword = str_split($keyword, 1);
+        $sample = "";
+        foreach($keyword as $index => $char){
 
-        // Init where group, so the orWhere statements will be relative only to this group
+            if($index == 0)
+                $sample = '%'.$char.'%';
+            else
+                $sample = $sample.$char.'%';
+
+        }
+
+        // Init where group, so the orWhere statements will be relative only to this group1
         $query->where(function ($query) use ($columns, $sample)
         {
             // Search for sample in first column
