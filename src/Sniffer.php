@@ -34,7 +34,7 @@ class Sniffer
      * @param array $columns
      * @return string
      */
-    public static function applySearchFilter(Builder $query, String $keyword, Array $columns)
+    private static function applySearchFilter(Builder $query, String $keyword, Array $columns)
     {
         // Convert string into array of single chars and stick them together to make sample
         $keyword = str_split($keyword, 1);
@@ -86,7 +86,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function applyFindGreater(Builder $query, Array $colsAndVals)
+    private static function applyFindGreater(Builder $query, Array $colsAndVals)
     {
         foreach ($colsAndVals as $col => $val)
         {
@@ -115,7 +115,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function applyFindLesser(Builder $query, Array $colsAndVals)
+    private static function applyFindLesser(Builder $query, Array $colsAndVals)
     {
         foreach ($colsAndVals as $col => $val)
         {
@@ -144,7 +144,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function applyFindEqual(Builder $query, Array $colsAndVals)
+    private static function applyFindEqual(Builder $query, Array $colsAndVals)
     {
         foreach ($colsAndVals as $col => $val)
         {
@@ -173,7 +173,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function applyFindMatchingValues(Builder $query, Array $colsAndVals)
+    private static function applyFindMatchingValues(Builder $query, Array $colsAndVals)
     {
         foreach($colsAndVals as $col => $val)
         {
