@@ -175,9 +175,11 @@ class Sniffer
      */
     private static function applyFindMatchingValues(Builder $query, Array $colsAndVals)
     {
-        foreach($colsAndVals as $col => $val)
-        {
-            $query->whereIn($col, $val);
-        }
+        if(is_array($colsAndVals))
+            foreach($colsAndVals as $col => $val)
+            {
+                if (is_array($val))
+                    $query->whereIn($col, $val);
+            }
     }
 }
