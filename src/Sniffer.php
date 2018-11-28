@@ -1,6 +1,6 @@
 <?php
 
-namespace Sniffer;
+namespace App\Libs\Sniffer;
 
 
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +17,7 @@ class Sniffer
      * @param array $columns
      * @return string
      */
-    public static function searchFilter(Builder $query, $keyword, Array $columns)
+    public static function SearchQueryForKeywordsInColumns(Builder $query, $keyword, Array $columns)
     {
         try{
             self::applySearchFilter($query, $keyword, $columns);
@@ -36,31 +36,15 @@ class Sniffer
      */
     private static function applySearchFilter(Builder $query, String $keyword, Array $columns)
     {
-        // Convert string into array of single chars and stick them together to make sample
-        $keyword = str_split($keyword, 1);
-        $sample = "";
-        foreach($keyword as $index => $char){
-
-            if($index == 0)
-                $sample = '%'.$char.'%';
-            else
-                $sample = $sample.$char.'%';
-
-        }
-
-        // Init where group, so the orWhere statements will be relative only to this group1
-        $query->where(function ($query) use ($columns, $sample)
+        $query->where(function ($query) use ($columns, $keyword)
         {
-            // Search for sample in first column
-            $query->where($columns[0], 'like', $sample);
+            $query->where($columns[0], 'like', '%'.$keyword.'%');
 
-            // If there's more than one column - search for sample in the rest of them
             if(count($columns) > 1)
             {
-                // We're skipping the first column for we already applied it above
                 foreach(array_slice($columns,1) as $column)
                 {
-                    $query->orWhere($column, 'like', $sample);
+                    $query->orWhere($column, 'like', '%'.$keyword.'%');
                 }
             }
         });
@@ -74,7 +58,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function findGreater(Builder $query, Array $colsAndVals)
+    public static function searchQueryForGreaterValues(Builder $query, Array $colsAndVals)
     {
         // TODO make error handling
         self::applyFindGreater($query, $colsAndVals);
@@ -103,7 +87,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function findLesser(Builder $query, Array $colsAndVals)
+    public static function searchQueryForLesserValues(Builder $query, Array $colsAndVals)
     {
         // TODO make error handling
         self::applyFindLesser($query, $colsAndVals);
@@ -132,7 +116,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function findEqual(Builder $query, Array $colsAndVals)
+    public static function searchQueryForEqualValues(Builder $query, Array $colsAndVals)
     {
         // TODO make error handling
         self::applyFindEqual($query, $colsAndVals);
@@ -161,7 +145,7 @@ class Sniffer
      * @param Builder $query
      * @param array $colsAndVals
      */
-    public static function findMatchingValues(Builder $query, Array $colsAndVals)
+    public static function searchQueryForValuesContainingValues(Builder $query, Array $colsAndVals)
     {
         // TODO make error hangling
         self::applyFindMatchingValues($query, $colsAndVals);
