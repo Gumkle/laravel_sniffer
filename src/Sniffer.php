@@ -3,58 +3,31 @@
 namespace App\Libs\Sniffer;
 
 
-use Illuminate\Database\Eloquent\Builder;
 use TypeError;
+use Illuminate\Database\Eloquent\Builder;
+use App\Libs\Sniffer\Keyword\ModelKeywordFilter;
+use App\Libs\Sniffer\Keyword\RelationsKeywordFilter;
 
 class Sniffer
 {
 
-    /**
-     * Try to apply search filter and handle any errors
-     *
-     * @param Builder $query
-     * @param $keyword
-     * @param array $columns
-     * @return string
-     */
-    public static function SearchQueryForKeywordsInColumns(Builder $query, $keyword, Array $columns)
+    public static function searchQueryForKeywordInColumns(Builder $query, String $keyword = null, array $columns = null)
     {
-        try{
-            self::applySearchFilter($query, $keyword, $columns);
-        } catch (TypeError $e){
-            return 'No keyword';
-        }
+        $keywordFilter = new ModelKeywordFilter($query, $keyword);
+        $keywordFilter->setColumns($columns);
+        return $keywordFilter->getFilteredQuery();
+    }
+
+    public static function searchQueryForKeywordInColumnsAndRelations(Builder $query, String $keyword = null, Array $columns = null, Array $relationsColumns = null)
+    {
+        $keywordFilter = new RelationsKeywordFilter($query, $keyword);
+        $keywordFilter->setColumns($columns);
+        $keywordFilter->setRelationsColumns($relationsColumns);
+        return $keywordFilter->getFilteredQuery();
     }
 
     /**
-     * Search for keyword in given columns and save results to query
-     *
-     * @param Builder $query
-     * @param String $keyword
-     * @param array $columns
-     * @return string
-     */
-    private static function applySearchFilter(Builder $query, String $keyword, Array $columns)
-    {
-        $query->where(function ($query) use ($columns, $keyword)
-        {
-            $query->where($columns[0], 'like', '%'.$keyword.'%');
-
-            if(count($columns) > 1)
-            {
-                foreach(array_slice($columns,1) as $column)
-                {
-                    $query->orWhere($column, 'like', '%'.$keyword.'%');
-                }
-            }
-        });
-
-        return 'Search applied';
-    }
-
-
-    /**
-     * Try to apply findGreater filter and catch any errors
+     * Try to apply findGreater filter and handle errors in case no keyword is specified
      * @param Builder $query
      * @param array $colsAndVals
      */
@@ -72,25 +45,26 @@ class Sniffer
      */
     private static function applyFindGreater(Builder $query, Array $colsAndVals)
     {
-        foreach ($colsAndVals as $col => $val)
-        {
-            if(isset($val))
-            {
+        foreach ($colsAndVals as $col => $val) {
+            if (isset($val)) {
                 $query->where($col, '>', $val);
             }
         }
     }
 
     /**
-     * Try to apply findLesser filter and catch any errors
+     * Try to apply findLesser filter and handle errors in case no keyword is specified
      *
      * @param Builder $query
      * @param array $colsAndVals
      */
     public static function searchQueryForLesserValues(Builder $query, Array $colsAndVals)
     {
-        // TODO make error handling
-        self::applyFindLesser($query, $colsAndVals);
+        try {
+            self::applyFindLesser($query, $colsAndVals);
+        } catch (TypeError $e) {
+            return;
+        }
     }
 
     /**
@@ -101,25 +75,26 @@ class Sniffer
      */
     private static function applyFindLesser(Builder $query, Array $colsAndVals)
     {
-        foreach ($colsAndVals as $col => $val)
-        {
-            if(isset($val))
-            {
+        foreach ($colsAndVals as $col => $val) {
+            if (isset($val)) {
                 $query->where($col, '>', $val);
             }
         }
     }
 
     /**
-     * Try to apply findEqual filter and catch any errors
+     * Try to apply findEqual filter and handle errors in case no keyword is specified
      *
      * @param Builder $query
      * @param array $colsAndVals
      */
     public static function searchQueryForEqualValues(Builder $query, Array $colsAndVals)
     {
-        // TODO make error handling
-        self::applyFindEqual($query, $colsAndVals);
+        try {
+            self::applyFindEqual($query, $colsAndVals);
+        } catch (TypeError $e) {
+            return;
+        }
     }
 
     /**
@@ -130,25 +105,26 @@ class Sniffer
      */
     private static function applyFindEqual(Builder $query, Array $colsAndVals)
     {
-        foreach ($colsAndVals as $col => $val)
-        {
-            if(isset($val))
-            {
+        foreach ($colsAndVals as $col => $val) {
+            if (isset($val)) {
                 $query->where($col, $val);
             }
         }
     }
 
     /**
-     * Try to apply findMatchingValues filter and catch any errors
+     * Try to apply findMatchingValues filter and handle errors in case no keyword is specified
      *
      * @param Builder $query
      * @param array $colsAndVals
      */
     public static function searchQueryForValuesContainingValues(Builder $query, Array $colsAndVals)
     {
-        // TODO make error hangling
-        self::applyFindMatchingValues($query, $colsAndVals);
+        try {
+            self::applyFindMatchingValues($query, $colsAndVals);
+        } catch (TypeError $e) {
+            return;
+        }
     }
 
     /**
@@ -159,9 +135,8 @@ class Sniffer
      */
     private static function applyFindMatchingValues(Builder $query, Array $colsAndVals)
     {
-        if(is_array($colsAndVals))
-            foreach($colsAndVals as $col => $val)
-            {
+        if (is_array($colsAndVals))
+            foreach ($colsAndVals as $col => $val) {
                 if (is_array($val))
                     $query->whereIn($col, $val);
             }
